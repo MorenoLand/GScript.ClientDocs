@@ -1352,6 +1352,12 @@
         if (link) link.closest('li').classList.add('active');
       }
 
+      function documentTop(element) {
+        let top = 0;
+        for (let node = element; node; node = node.offsetParent) top += node.offsetTop;
+        return top;
+      }
+
       function syncHeadingActive(preferRoute) {
         const headings = Array.prototype.slice.call(document.querySelectorAll('.markdown-section h2[id], .markdown-section h3[id], .markdown-section h4[id]'));
         if (!headings.length) return;
@@ -1362,8 +1368,9 @@
         }
         if (!id) {
           const threshold = Math.min(180, Math.max(100, window.innerHeight * 0.18));
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
           id = headings[0].id;
-          headings.forEach(function(heading) { if (heading.getBoundingClientRect().top <= threshold) id = heading.id; });
+          headings.forEach(function(heading) { if (documentTop(heading) <= scrollTop + threshold) id = heading.id; });
         }
         setHeadingActive(id);
       }
