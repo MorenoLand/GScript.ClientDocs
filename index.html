@@ -934,6 +934,21 @@
       border-left: 3px solid var(--accent) !important;
     }
 
+    body .sidebar-nav ul.app-sub-sidebar li.active > a {
+      color: var(--text-muted) !important;
+      background: transparent !important;
+      border: 0 !important;
+      font-weight: 400 !important;
+    }
+
+    body .sidebar-nav ul.app-sub-sidebar li.clientdocs-current > a {
+      color: #ffffff !important;
+      background: #2d3740 !important;
+      border: 1px solid #45525e !important;
+      border-left: 3px solid var(--accent) !important;
+      font-weight: 650 !important;
+    }
+
     @media (min-width: 769px) {
       body .sidebar-toggle,
       body .sidebar-toggle-button {
@@ -1347,15 +1362,9 @@
 
       function setHeadingActive(id) {
         const links = document.querySelectorAll('.sidebar-nav a[href*="id="]');
-        links.forEach(function(link) { link.closest('li').classList.remove('active'); });
+        links.forEach(function(link) { link.closest('li').classList.remove('clientdocs-current'); });
         const link = headingLink(id);
-        if (link) link.closest('li').classList.add('active');
-      }
-
-      function documentTop(element) {
-        let top = 0;
-        for (let node = element; node; node = node.offsetParent) top += node.offsetTop;
-        return top;
+        if (link) link.closest('li').classList.add('clientdocs-current');
       }
 
       function syncHeadingActive(preferRoute) {
@@ -1367,14 +1376,9 @@
           id = new URLSearchParams(query).get('id') || '';
         }
         if (!id) {
-          const threshold = Math.min(140, Math.max(80, window.innerHeight * 0.12));
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-          if (scrollTop < 24) {
-            id = headings[0].id;
-          } else {
-            const next = headings.find(function(heading) { return documentTop(heading) >= scrollTop + threshold; });
-            id = (next || headings[headings.length - 1]).id;
-          }
+          const threshold = Math.min(160, Math.max(80, window.innerHeight * 0.12));
+          const next = headings.find(function(heading) { return heading.getBoundingClientRect().top >= threshold; });
+          id = (next || headings[headings.length - 1]).id;
         }
         setHeadingActive(id);
       }
