@@ -1367,10 +1367,14 @@
           id = new URLSearchParams(query).get('id') || '';
         }
         if (!id) {
-          const threshold = Math.min(180, Math.max(100, window.innerHeight * 0.18));
+          const threshold = Math.min(140, Math.max(80, window.innerHeight * 0.12));
           const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-          id = headings[0].id;
-          headings.forEach(function(heading) { if (documentTop(heading) <= scrollTop + threshold) id = heading.id; });
+          if (scrollTop < 24) {
+            id = headings[0].id;
+          } else {
+            const next = headings.find(function(heading) { return documentTop(heading) >= scrollTop + threshold; });
+            id = (next || headings[headings.length - 1]).id;
+          }
         }
         setHeadingActive(id);
       }
